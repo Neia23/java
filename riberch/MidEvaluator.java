@@ -12,7 +12,7 @@ class MidEvaluator implements Evaluator
 			return this;
 		}
 		
-		// ‘ã“ü‰‰Zq‚Ì‘ã‚í‚è
+		// ä»£å…¥æ¼”ç®—å­ã®ä»£ã‚ã‚Š
 		public void set(EdgeParam e)
 		{
 			stable = e.stable;
@@ -21,16 +21,16 @@ class MidEvaluator implements Evaluator
 			Cmove = e.Cmove;
 		}
 
-		public byte stable = 0; // Šm’èÎ‚ÌŒÂ”
-		public byte wing = 0; // ƒEƒCƒ“ƒO‚ÌŒÂ”
-		public byte mountain = 0; // R‚ÌŒÂ”
-		public byte Cmove = 0; // ŠëŒ¯‚ÈC‘Å‚¿‚ÌŒÂ”
+		public byte stable = 0; // ç¢ºå®šçŸ³ã®å€‹æ•°
+		public byte wing = 0; // ã‚¦ã‚¤ãƒ³ã‚°ã®å€‹æ•°
+		public byte mountain = 0; // å±±ã®å€‹æ•°
+		public byte Cmove = 0; // å±é™ºãªCå†…ã®å€‹æ•°
 	}
 
 	class CornerParam
 	{
-		public byte corner = 0; // ‹÷‚É‚ ‚éÎ‚Ì”
-		public byte Xmove = 0;  // ŠëŒ¯‚ÈX‘Å‚¿‚ÌŒÂ”
+		public byte corner = 0; // éš…ã«ã‚ã‚‹çŸ³ã®æ•°
+		public byte Xmove = 0;  // å±é™ºãªXå†…ã®å€‹æ•°
 	}
 	
 	class EdgeStat
@@ -68,7 +68,7 @@ class MidEvaluator implements Evaluator
 	}
 
 
-	// d‚İŒW”‚ğ‹K’è‚·‚é\‘¢‘Ì
+	// é‡ã¿ä¿‚æ•°ã‚’è¦å®šã™ã‚‹æ§‹é€ ä½“
 	class Weight
 	{
 		int mobility_w;
@@ -91,7 +91,7 @@ class MidEvaluator implements Evaluator
 		if(!TableInit)
 		{
 			//
-			//	‰‰ñ‹N“®‚Éƒe[ƒuƒ‹‚ğ¶¬
+			//	åˆå›èµ·å‹•æ™‚ã«ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’ç”Ÿæˆ
 			//
 
 			int[] line = new int[Board.BOARD_SIZE];
@@ -100,7 +100,7 @@ class MidEvaluator implements Evaluator
 			TableInit = true;
 		}
 
-		// d‚İŒW”‚Ìİ’è (‘S‹Ç–Ê‹¤’Ê)
+		// é‡ã¿ä¿‚æ•°ã®è¨­å®š(å…¨å±€é¢å…±é€š)
 		
 		EvalWeight = new Weight();
 
@@ -119,7 +119,7 @@ class MidEvaluator implements Evaluator
 		int result;
 
 		//
-		//	•Ó‚Ì•]‰¿
+		//	è¾ºã®è©•ä¾¡
 		//
 
 		edgestat  = EdgeTable[idxTop(board)];
@@ -128,18 +128,18 @@ class MidEvaluator implements Evaluator
 		edgestat.add(EdgeTable[idxLeft(board)]);
 
 		//
-		//	‹÷‚Ì•]‰¿
+		//	éš…ã®è©•ä¾¡
 		//
 
 		cornerstat = evalCorner(board);
 
-		// Šm’èÎ‚ÉŠÖ‚µ‚ÄA‹÷‚ÌÎ‚ğ2‰ñ”‚¦‚Ä‚µ‚Ü‚Á‚Ä‚¢‚é‚Ì‚Å•â³B
+		// ç¢ºå®šå¸­ã«é–¢ã—ã¦ã€éš…ã®çŸ³ã‚’ï¼’å›æ•°ãˆã¦ã—ã¾ã£ã¦ã„ã‚‹ã®ã§è£œæ­£
 
 		edgestat.get(Disc.BLACK).stable -= cornerstat.get(Disc.BLACK).corner;
 		edgestat.get(Disc.WHITE).stable -= cornerstat.get(Disc.WHITE).corner;
 
 		//
-		//	ƒpƒ‰ƒ[ƒ^‚ÌüŒ`Œ‹‡
+		//	ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®ç·šå‹çµåˆ
 		//
 
 		result =
@@ -153,7 +153,7 @@ class MidEvaluator implements Evaluator
 			- edgestat.get(Disc.WHITE).Cmove * EvalWeight.Cmove_w
 			;
 
-		// ŠJ•ú“xE’…è‰Â”\è”‚Ì•]‰¿
+		// é–‹æ”¾åº¦ãƒ»ç€æ‰‹å¯èƒ½æ‰‹æ•°ã®è©•ä¾¡
 
 		if(EvalWeight.liberty_w != 0)
 		{
@@ -162,7 +162,7 @@ class MidEvaluator implements Evaluator
 			result -= liberty.get(Disc.WHITE) * EvalWeight.liberty_w;
 		}
 
-		// Œ»İ‚Ìè”Ô‚ÌF‚É‚Â‚¢‚Ä‚Ì‚İA’…è‰Â”\è”‚ğ”‚¦‚é
+		// ç¾çŠ¶ã®æ‰‹ç•ªã®è‰²ã«ã¤ã„ã¦ã®ã¿ã€ç€æ‰‹å¯èƒ½æ‰‹æ•°ã‚’æ•°ãˆã‚‹
 		result +=
 			  board.getCurrentColor()
 			* board.getMovablePos().size()
@@ -177,7 +177,7 @@ class MidEvaluator implements Evaluator
 		if(count == Board.BOARD_SIZE)
 		{
 			//
-			//	‚±‚Ìƒpƒ^[ƒ“‚ÍŠ®¬‚µ‚½‚Ì‚ÅA‹Ç–Ê‚ÌƒJƒEƒ“ƒg
+			//	ã“ã®ãƒ‘ã‚¿ãƒ¼ãƒ³ã¯å®Œæˆã—ãŸã®ã§ã€å±€é¢ã®ã‚«ã‚¦ãƒ³ãƒˆ
 			//
 
 			EdgeStat stat = new EdgeStat();
@@ -190,7 +190,7 @@ class MidEvaluator implements Evaluator
 			return;
 		}
 
-		// Ä‹A“I‚É‘S‚Ä‚Ìƒpƒ^[ƒ“‚ğ–Ô—…
+		// å†å¸°çš„ã«å…¨ã¦ã®ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’ç¶²ç¾…
 
 		edge[count] = Disc.EMPTY;
 		generateEdge(edge, count +1);
@@ -212,7 +212,7 @@ class MidEvaluator implements Evaluator
 		int x;
 
 		//
-		//	ƒEƒBƒ“ƒO“™‚ÌƒJƒEƒ“ƒg
+		//	ã‚¦ã‚£ãƒ³ã‚°ãªã©ã®ã‚«ã‚¦ãƒ³ãƒˆ
 		//
 
 		if(line[0] == Disc.EMPTY && line[7] == Disc.EMPTY)
@@ -223,7 +223,7 @@ class MidEvaluator implements Evaluator
 				if(line[x] != color) break;
 				x++;
 			}
-			if(x == 6) // ­‚È‚­‚Æ‚àƒuƒƒbƒN‚ª‚Å‚«‚Ä‚¢‚é
+			if(x == 6) // å°‘ãªãã¨ã‚‚ãƒ–ãƒ­ãƒƒã‚¯ãŒã§ãã¦ã„ã‚‹
 			{
 				if(line[1] == color && line[6] == Disc.EMPTY)
 					edgeparam.wing = 1;
@@ -232,7 +232,7 @@ class MidEvaluator implements Evaluator
 				else if(line[1] == color && line[6] == color)
 					edgeparam.mountain = 1;
 			}
-			else // ‚»‚êˆÈŠO‚Ìê‡‚ÉA‹÷‚É—×Ú‚·‚éˆÊ’u‚É’u‚¢‚Ä‚¢‚½‚ç
+			else // ãã‚Œä»¥å¤–ã®å ´åˆã«ã€éš…ã«éš£æ¥ã™ã‚‹ä½ç½®ã«ç½®ã„ã¦ã„ãŸã‚‰
 			{
 				if(line[1] == color)
 					edgeparam.Cmove++;
@@ -242,10 +242,10 @@ class MidEvaluator implements Evaluator
 		}
 
 		//
-		//	Šm’èÎ‚ÌƒJƒEƒ“ƒg
+		//	ç¢ºå®šçŸ³ã®ã‚«ã‚¦ãƒ³ãƒˆ
 		//
 
-		// ¶‚©‚ç‰E•ûŒü‚É‘–¸
+		// å·¦ã‹ã‚‰å³æ–¹å‘ã«èµ°æŸ»
 		for(x = 0; x < 8; x++)
 		{
 			if(line[x] != color) break;
@@ -254,7 +254,7 @@ class MidEvaluator implements Evaluator
 
 		if(edgeparam.stable < 8)
 		{
-			// ‰E‘¤‚©‚ç‚Ì‘–¸‚à•K—v
+			// å³å´ã‹ã‚‰ã®èµ°æŸ»ã‚‚å¿…è¦
 			for(x = 7; x > 0; x--)
 			{
 				if(line[x] != color) break;
@@ -277,7 +277,7 @@ class MidEvaluator implements Evaluator
 		
 		Point p = new Point();
 
-		//	¶ã
+		//	å·¦ä¸Š
 		p.x = 1; p.y = 1;
 		cornerstat.get(board.getColor(p)).corner++;
 		if(board.getColor(p) == Disc.EMPTY)
@@ -286,7 +286,7 @@ class MidEvaluator implements Evaluator
 			cornerstat.get(board.getColor(p)).Xmove++;
 		}
 
-		//	¶‰º
+		//	å·¦ä¸‹
 		p.x = 1; p.y = 8;
 		cornerstat.get(board.getColor(p)).corner++;
 		if(board.getColor(p) == Disc.EMPTY)
@@ -295,7 +295,7 @@ class MidEvaluator implements Evaluator
 			cornerstat.get(board.getColor(p)).Xmove++;
 		}
 
-		//	‰E‰º
+		//	å³ä¸‹
 		p.x = 8; p.y = 8;
 		cornerstat.get(board.getColor(p)).corner++;
 		if(board.getColor(p) == Disc.EMPTY)
@@ -304,7 +304,7 @@ class MidEvaluator implements Evaluator
 			cornerstat.get(board.getColor(p)).Xmove++;
 		}
 
-		//	‰Eã
+		//	å³ä¸Š
 		p.x = 8; p.y = 1;
 		cornerstat.get(board.getColor(p)).corner++;
 		if(board.getColor(p) == Disc.EMPTY)

@@ -25,7 +25,7 @@ class CoordinatesTransformer
 
 	}
 	
-	// À•W‚ğf5‚ğŠJn“_‚Æ‚·‚éÀ•WŒn‚É³‹K‰»‚·‚é
+	// åº§æ¨™ã‚’f5ã‚’é–‹å§‹ç‚¹ã¨ã™ã‚‹åº§æ¨™ç³»ã«æ­£è¦åŒ–ã™ã‚‹
 	public Point normalize(Point p)
 	{
 		Point newp = rotatePoint(p, Rotate);
@@ -34,7 +34,7 @@ class CoordinatesTransformer
 		return newp;
 	}
 	
-	// f5‚ğŠJn“_‚Æ‚·‚éÀ•W‚ğ–{—ˆ‚ÌÀ•W‚É–ß‚·
+	// f5ã‚’é–‹å§‹ç‚¹ã¨ã™ã‚‹åº§æ¨™ã‚’æœ¬æ¥ã®åº§æ¨™ã«æˆ»ã™
 	public Point denormalize(Point p)
 	{
 		Point newp = new Point(p.x, p.y);
@@ -154,7 +154,7 @@ class BookManager
 		Point first = (Point) history.get(0);
 		CoordinatesTransformer transformer = new CoordinatesTransformer(first);
 
-		// À•W‚ğ•ÏŠ·‚µ‚Äf5‚©‚çn‚Ü‚é‚æ‚¤‚É‚·‚é
+		// åº§æ¨™ã‚’å¤‰æ›ã—ã¦f5ã‹ã‚‰å§‹ã¾ã‚‹ã‚ˆã†ã«ã™ã‚‹
 		Vector normalized = new Vector();
 		for(int i=0; i<history.size(); i++)
 		{
@@ -165,7 +165,7 @@ class BookManager
 		}
 		
 
-		// Œ»İ‚Ü‚Å‚ÌŠû•ˆƒŠƒXƒg‚Æ’èÎ‚Ì‘Î‰‚ğæ‚é
+		// ç¾åœ¨ã¾ã§ã®æ£‹è­œãƒªã‚¹ãƒˆã¨å®šå¸­å¯¾å¿œã‚’ã¨ã‚‹
 		for(int i=1; i<normalized.size(); i++)
 		{
 			Point p = (Point) normalized.get(i);
@@ -179,17 +179,17 @@ class BookManager
 			}
 			if(node == null)
 			{
-				// ’èÎ‚ğŠO‚ê‚Ä‚¢‚é
+				// å®šçŸ³ã‚’å¤–ã‚Œã¦ã„ã‚‹
 				return board.getMovablePos();
 			}
 		}
 		
-		// —š—ğ‚Æ’èÎ‚ÌI‚í‚è‚ªˆê’v‚µ‚Ä‚¢‚½ê‡
+		// å±¥æ­´ã¨å®šçŸ³ã®çµ‚ã‚ã‚ŠãŒä¸€è‡´ã—ã¦ã„ãŸå ´åˆ
 		if(node.child == null) return board.getMovablePos();
 
 		Point next_move = getNextMove(node);
-		
-		// À•W‚ğŒ³‚ÌŒ`‚É•ÏŠ·‚·‚é
+		ÃŸ
+		// åº§å¸­ã‚’å…ƒã®å½¢ã«å¤‰æ›ã™ã‚‹
 		next_move = transformer.denormalize(next_move);
 		
 		Vector v = new Vector();
@@ -224,7 +224,7 @@ class BookManager
 
 			if(node.child == null)
 			{
-				// V‚µ‚¢’èÎè
+				// æ–°ã—ã„å®šçŸ³æ‰‹
 				node.child = new Node();
 				node = node.child;
 				node.point.x = p.x;
@@ -232,15 +232,15 @@ class BookManager
 			}
 			else
 			{
-				// ŒZ’íƒm[ƒh‚Ì’Tõ‚ÉˆÚ‚é
+				// å…„å¼Ÿãƒãƒ¼ãƒ‰ã®æ¢ç´¢ã«ç§»ã‚‹
 				node = node.child;
 
 				while(true)
 				{
-					// Šù‚É‚±‚Ìè‚Íƒf[ƒ^ƒx[ƒX’†‚É‚ ‚èA‚»‚Ì}‚ğŒ©‚Â‚¯‚½
+					// æ—¢å­˜ã®æ‰‹ã§ã‚ã£ãŸå ´åˆã¯ã€ãã®æã‚’è¦‹ã¤ã‘ã¦è¿”ã™
 					if(node.point.equals(p)) break;
 
-					// ’èÎ–Ø‚ÌV‚µ‚¢}
+					// å®šçŸ³æœ¨ã®æ–°ã—ã„æ
 					if(node.sibling == null)
 					{
 						node.sibling = new Node();
