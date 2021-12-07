@@ -80,7 +80,7 @@ class AIPlayer implements Player
 		System.out.println("完了");
 		if(board.isGameOver()) throw new GameOverException();
 	}
-};
+}
 
 class ReversiGame
 {
@@ -103,12 +103,11 @@ class ReversiGame
 			player[0] = new AIPlayer();
 			player[1] = new HumanPlayer();
 		}
-		else
-		{
+		else{
 			player[0] = new HumanPlayer();
 			player[1] = new AIPlayer();
 		}
-		
+
 		while(true)
 		{
 			board.print();
@@ -120,12 +119,13 @@ class ReversiGame
 			{
 				do
 				{
-					board.undo(); board.undo();
-				} while(board.getMovablePos().isEmpty());
+					board.undo();
+					board.undo();
+				}
+				while(board.getMovablePos().isEmpty());
 				continue;
 			}
-			catch(ExitException e)
-			{
+			catch(ExitException e){
 				return;
 			}
 			catch(GameOverException e)
@@ -133,7 +133,6 @@ class ReversiGame
 				System.out.println("ゲーム終了");
 				System.out.print("黒石" + board.countDisc(Disc.BLACK) + " ");
 				System.out.println("白石" + board.countDisc(Disc.WHITE));
-
 				return;
 			}
 			catch(Exception e)
@@ -142,10 +141,8 @@ class ReversiGame
 				System.out.println("Unexpected exception: " + e);
 				return;
 			}
-
 			// プレイヤーの交代
 			current_player = ++current_player % 2;
 		}
-
 	}
 }

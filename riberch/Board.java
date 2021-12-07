@@ -222,7 +222,7 @@ class Board
 		for(int i=0; i<UpdateLog.size(); i++)
 		{
 			Vector update = (Vector) UpdateLog.get(i);
-			if(update.isEmpty()) continue; // �p�X�͔�΂�
+			if(update.isEmpty()) continue; // パスは飛ばす
 			history.add(update.get(0));
 		}
 		
@@ -243,13 +243,13 @@ class Board
 	
 	private int checkMobility(Disc disc)
 	{
-		// ���ɐ΂���������u���Ȃ�
+		// すでに石があったら置けない
 		if(RawBoard[disc.x][disc.y] != Disc.EMPTY) return NONE;
 
 		int x, y;
 		int dir = NONE;
 
-		// ��
+		// 上
 		if(RawBoard[disc.x][disc.y-1] == -disc.color)
 		{
 			x = disc.x; y = disc.y-2;
@@ -257,7 +257,7 @@ class Board
 			if(RawBoard[x][y] == disc.color) dir |= UPPER;
 		}
 
-		// ��
+		// 下
 		if(RawBoard[disc.x][disc.y+1] == -disc.color)
 		{
 			x = disc.x; y = disc.y+2;
@@ -265,7 +265,7 @@ class Board
 			if(RawBoard[x][y] == disc.color) dir |= LOWER;
 		}
 
-		// ��
+		// 左
 		if(RawBoard[disc.x-1][disc.y] == -disc.color)
 		{
 			x = disc.x-2; y = disc.y;
@@ -273,7 +273,7 @@ class Board
 			if(RawBoard[x][y] == disc.color) dir |= LEFT;
 		}
 
-		// �E
+		// 右
 		if(RawBoard[disc.x+1][disc.y] == -disc.color)
 		{
 			x = disc.x+2; y = disc.y;
@@ -282,7 +282,7 @@ class Board
 		}
 
 
-		// �E��
+		// 右上
 		if(RawBoard[disc.x+1][disc.y-1] == -disc.color)
 		{
 			x = disc.x+2; y = disc.y-2;
@@ -290,7 +290,7 @@ class Board
 			if(RawBoard[x][y] == disc.color) dir |= UPPER_RIGHT;
 		}
 
-		// ����
+		// 左上
 		if(RawBoard[disc.x-1][disc.y-1] == -disc.color)
 		{
 			x = disc.x-2; y = disc.y-2;
@@ -298,7 +298,7 @@ class Board
 			if(RawBoard[x][y] == disc.color) dir |= UPPER_LEFT;
 		}
 
-		// ����
+		// 左下
 		if(RawBoard[disc.x-1][disc.y+1] == -disc.color)
 		{
 			x = disc.x-2; y = disc.y+2;
@@ -306,7 +306,7 @@ class Board
 			if(RawBoard[x][y] == disc.color) dir |= LOWER_LEFT;
 		}
 
-		// �E��
+		// 右下
 		if(RawBoard[disc.x+1][disc.y+1] == -disc.color)
 		{
 			x = disc.x+2; y = disc.y+2;

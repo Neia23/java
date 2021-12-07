@@ -11,13 +11,13 @@ class ConsoleBoard extends Board
 				switch(getColor(new Point(x, y)))
 				{
 				case Disc.BLACK:
-					System.out.print("Åú");
+					System.out.print("‚óè");
 					break;
 				case Disc.WHITE:
-					System.out.print("Åõ");
+					System.out.print("‚óØ");
 					break;
 				default:
-					System.out.print("Å@");
+					System.out.print(" ");
 					break;
 				}
 			}
