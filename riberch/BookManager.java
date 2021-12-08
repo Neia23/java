@@ -188,7 +188,6 @@ class BookManager
 		if(node.child == null) return board.getMovablePos();
 
 		Point next_move = getNextMove(node);
-		ß
 		// 座席を元の形に変換する
 		next_move = transformer.denormalize(next_move);
 		
