@@ -2,7 +2,7 @@ class ConsoleBoard extends Board
 {
 	public void print()
 	{
-		System.out.println("  a b c d e f g h ");
+		System.out.println("  abcdefgh ");
 		for(int y=1; y<=8; y++)
 		{
 			System.out.print(" " + y);
