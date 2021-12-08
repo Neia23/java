@@ -121,8 +121,7 @@ class ReversiGame
 				{
 					board.undo();
 					board.undo();
-				}
-				while(board.getMovablePos().isEmpty());
+				} while(board.getMovablePos().isEmpty());
 				continue;
 			}
 			catch(ExitException e){
