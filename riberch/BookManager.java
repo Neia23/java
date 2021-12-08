@@ -1,82 +1,73 @@
 import java.util.*;
 import java.io.*;
 
-class CoordinatesTransformer
-{
+class CoordinatesTransformer {
 	private int Rotate = 0;
 	private boolean Mirror = false;
 
-	public CoordinatesTransformer(Point first)
-	{
-		if(first.equals(new Point("d3")))
-		{
+	public CoordinatesTransformer(Point first) {
+		if (first.equals(new Point("d3"))) {
 			Rotate = 1;
 			Mirror = true;
-		}
-		else if(first.equals(new Point("c4")))
-		{
+		} else if (first.equals(new Point("c4"))) {
 			Rotate = 2;
-		}
-		else if(first.equals(new Point("e6")))
-		{
+		} else if (first.equals(new Point("e6"))) {
 			Rotate = -1;
 			Mirror = true;
 		}
 
 	}
-	
-	// À•W‚ğf5‚ğŠJn“_‚Æ‚·‚éÀ•WŒn‚É³‹K‰»‚·‚é
-	public Point normalize(Point p)
-	{
+
+	// åº§æ¨™ã‚’f5ã‚’é–‹å§‹ç‚¹ã¨ã™ã‚‹åº§æ¨™ç³»ã«æ­£è¦åŒ–ã™ã‚‹
+	public Point normalize(Point p) {
 		Point newp = rotatePoint(p, Rotate);
-		if(Mirror) newp = mirrorPoint(newp);
-		
-		return newp;
-	}
-	
-	// f5‚ğŠJn“_‚Æ‚·‚éÀ•W‚ğ–{—ˆ‚ÌÀ•W‚É–ß‚·
-	public Point denormalize(Point p)
-	{
-		Point newp = new Point(p.x, p.y);
-		if(Mirror) newp = mirrorPoint(newp);
-		
-		newp = rotatePoint(newp, -Rotate);
-		
+		if (Mirror)
+			newp = mirrorPoint(newp);
+
 		return newp;
 	}
 
-	private Point rotatePoint(Point old_point, int rotate)
-	{
+	// f5ã‚’é–‹å§‹ç‚¹ã¨ã™ã‚‹åº§æ¨™ã‚’æœ¬æ¥ã®åº§æ¨™ã«æˆ»ã™
+	public Point denormalize(Point p) {
+		Point newp = new Point(p.x, p.y);
+		if (Mirror)
+			newp = mirrorPoint(newp);
+
+		newp = rotatePoint(newp, -Rotate);
+
+		return newp;
+	}
+
+	private Point rotatePoint(Point old_point, int rotate) {
 		rotate %= 4;
-		if(rotate < 0) rotate += 4;
+		if (rotate < 0)
+			rotate += 4;
 
 		Point new_point = new Point();
-		
-		switch(rotate)
-		{
-		case 1:
-			new_point.x = old_point.y;
-			new_point.y = Board.BOARD_SIZE - old_point.x+1;
-			break;
-		case 2:
-			new_point.x = Board.BOARD_SIZE - old_point.x+1;
-			new_point.y = Board.BOARD_SIZE - old_point.y+1;
-			break;
-		case 3:
-			new_point.x = Board.BOARD_SIZE - old_point.y+1;
-			new_point.y = old_point.x;
-			break;
-		default: // 0
-			new_point.x = old_point.x;
-			new_point.y = old_point.y;
-			break;
+
+		switch (rotate) {
+			case 1:
+				new_point.x = old_point.y;
+				new_point.y = Board.BOARD_SIZE - old_point.x + 1;
+				break;
+			case 2:
+				new_point.x = Board.BOARD_SIZE - old_point.x + 1;
+				new_point.y = Board.BOARD_SIZE - old_point.y + 1;
+				break;
+			case 3:
+				new_point.x = Board.BOARD_SIZE - old_point.y + 1;
+				new_point.y = old_point.x;
+				break;
+			default: // 0
+				new_point.x = old_point.x;
+				new_point.y = old_point.y;
+				break;
 		}
-		
+
 		return new_point;
 	}
 
-	private Point mirrorPoint(Point point)
-	{
+	private Point mirrorPoint(Point point) {
 		Point new_point = new Point();
 		new_point.x = Board.BOARD_SIZE - point.x + 1;
 		new_point.y = point.y;
@@ -85,164 +76,140 @@ class CoordinatesTransformer
 	}
 }
 
-class BookManager
-{
-	
+class BookManager {
+
 	private static final String BOOK_FILE_NAME = "reversi.book";
 
-	class Node
-	{
+	class Node {
 		public Node child = null;
 		public Node sibling = null;
 		// public int eval = 0;
 		public Point point = new Point();
 	}
-	
+
 	private Node Root = null;
 
-	public BookManager()
-	{
+	public BookManager() {
 		Root = new Node();
 		Root.point = new Point("f5");
-		
+
 		FileInputStream fis = null;
-		try
-		{
+		try {
 			fis = new FileInputStream(BOOK_FILE_NAME);
-		}
-		catch(FileNotFoundException e)
-		{
+		} catch (FileNotFoundException e) {
 			return;
 		}
-		
+
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-		
+
 		String line;
-		try
-		{
-			while((line = br.readLine()) != null)
-			{
+		try {
+			while ((line = br.readLine()) != null) {
 				Vector book = new Vector();
-				for(int i=0; i<line.length(); i+=2)
-				{
+				for (int i = 0; i < line.length(); i += 2) {
 					Point p = null;
-					try
-					{
+					try {
 						p = new Point(line.substring(i));
-					}
-					catch(IllegalArgumentException e)
-					{
+					} catch (IllegalArgumentException e) {
 						break;
 					}
 
 					book.add(p);
 				}
-				
+
 				add(book);
 			}
+		} catch (IOException e) {
 		}
-		catch(IOException e) {}
 	}
 
-	public Vector find(Board board)
-	{
+	public Vector find(Board board) {
 		Node node = Root;
 		Vector history = board.getHistory();
-		
-		if(history.isEmpty()) return board.getMovablePos();
-		
+
+		if (history.isEmpty())
+			return board.getMovablePos();
+
 		Point first = (Point) history.get(0);
 		CoordinatesTransformer transformer = new CoordinatesTransformer(first);
 
-		// À•W‚ğ•ÏŠ·‚µ‚Äf5‚©‚çn‚Ü‚é‚æ‚¤‚É‚·‚é
+		// åº§æ¨™ã‚’å¤‰æ›ã—ã¦f5ã‹ã‚‰å§‹ã¾ã‚‹ã‚ˆã†ã«ã™ã‚‹
 		Vector normalized = new Vector();
-		for(int i=0; i<history.size(); i++)
-		{
+		for (int i = 0; i < history.size(); i++) {
 			Point p = (Point) history.get(i);
 			p = transformer.normalize(p);
 
 			normalized.add(p);
 		}
-		
 
-		// Œ»İ‚Ü‚Å‚ÌŠû•ˆƒŠƒXƒg‚Æ’èÎ‚Ì‘Î‰‚ğæ‚é
-		for(int i=1; i<normalized.size(); i++)
-		{
+		// ç¾åœ¨ã¾ã§ã®æ£‹è­œãƒªã‚¹ãƒˆã¨å®šå¸­å¯¾å¿œã‚’ã¨ã‚‹
+		for (int i = 1; i < normalized.size(); i++) {
 			Point p = (Point) normalized.get(i);
 
 			node = node.child;
-			while(node != null)
-			{
-				if(node.point.equals(p)) break;
+			while (node != null) {
+				if (node.point.equals(p))
+					break;
 
 				node = node.sibling;
 			}
-			if(node == null)
-			{
-				// ’èÎ‚ğŠO‚ê‚Ä‚¢‚é
+			if (node == null) {
+				// å®šçŸ³ã‚’å¤–ã‚Œã¦ã„ã‚‹
 				return board.getMovablePos();
 			}
 		}
-		
-		// —š—ğ‚Æ’èÎ‚ÌI‚í‚è‚ªˆê’v‚µ‚Ä‚¢‚½ê‡
-		if(node.child == null) return board.getMovablePos();
+
+		// å±¥æ­´ã¨å®šçŸ³ã®çµ‚ã‚ã‚ŠãŒä¸€è‡´ã—ã¦ã„ãŸå ´åˆ
+		if (node.child == null)
+			return board.getMovablePos();
 
 		Point next_move = getNextMove(node);
-		
-		// À•W‚ğŒ³‚ÌŒ`‚É•ÏŠ·‚·‚é
+		// åº§å¸­ã‚’å…ƒã®å½¢ã«å¤‰æ›ã™ã‚‹
 		next_move = transformer.denormalize(next_move);
-		
+
 		Vector v = new Vector();
 		v.add(next_move);
-		
+
 		return v;
 
 	}
-	
-	private Point getNextMove(Node node)
-	{
+
+	private Point getNextMove(Node node) {
 		Vector candidates = new Vector();
-		
-		for(Node p=node.child; p != null; p = p.sibling)
-		{
+
+		for (Node p = node.child; p != null; p = p.sibling) {
 			candidates.add(p.point);
 		}
 
-		int index = (int)(Math.random() * candidates.size());
+		int index = (int) (Math.random() * candidates.size());
 		Point point = (Point) candidates.get(index);
 
 		return new Point(point.x, point.y);
 	}
-	
-	private void add(Vector book)
-	{
+
+	private void add(Vector book) {
 		Node node = Root;
 
-		for(int i=1; i<book.size(); i++)
-		{
+		for (int i = 1; i < book.size(); i++) {
 			Point p = (Point) book.get(i);
 
-			if(node.child == null)
-			{
-				// V‚µ‚¢’èÎè
+			if (node.child == null) {
+				// æ–°ã—ã„å®šçŸ³æ‰‹
 				node.child = new Node();
 				node = node.child;
 				node.point.x = p.x;
 				node.point.y = p.y;
-			}
-			else
-			{
-				// ŒZ’íƒm[ƒh‚Ì’Tõ‚ÉˆÚ‚é
+			} else {
+				// å…„å¼Ÿãƒãƒ¼ãƒ‰ã®æ¢ç´¢ã«ç§»ã‚‹
 				node = node.child;
 
-				while(true)
-				{
-					// Šù‚É‚±‚Ìè‚Íƒf[ƒ^ƒx[ƒX’†‚É‚ ‚èA‚»‚Ì}‚ğŒ©‚Â‚¯‚½
-					if(node.point.equals(p)) break;
+				while (true) {
+					// æ—¢å­˜ã®æ‰‹ã§ã‚ã£ãŸå ´åˆã¯ã€ãã®æã‚’è¦‹ã¤ã‘ã¦è¿”ã™
+					if (node.point.equals(p))
+						break;
 
-					// ’èÎ–Ø‚ÌV‚µ‚¢}
-					if(node.sibling == null)
-					{
+					// å®šçŸ³æœ¨ã®æ–°ã—ã„æ
+					if (node.sibling == null) {
 						node.sibling = new Node();
 
 						node = node.sibling;
@@ -250,12 +217,11 @@ class BookManager
 						node.point.y = p.y;
 						break;
 					}
-					
+
 					node = node.sibling;
 				}
 			}
 		}
 	}
-
 
 }

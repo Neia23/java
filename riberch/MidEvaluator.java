@@ -1,9 +1,6 @@
-class MidEvaluator implements Evaluator
-{
-	class EdgeParam
-	{
-		public EdgeParam add(EdgeParam src)
-		{
+class MidEvaluator implements Evaluator {
+	class EdgeParam {
+		public EdgeParam add(EdgeParam src) {
 			stable += src.stable;
 			wing += src.wing;
 			mountain += src.mountain;
@@ -11,66 +8,59 @@ class MidEvaluator implements Evaluator
 
 			return this;
 		}
-		
-		// ‘ã“ü‰‰Zq‚Ì‘ã‚í‚è
-		public void set(EdgeParam e)
-		{
+
+		// ä»£å…¥æ¼”ç®—å­ã®ä»£ã‚ã‚Š
+		public void set(EdgeParam e) {
 			stable = e.stable;
 			wing = e.wing;
 			mountain = e.mountain;
 			Cmove = e.Cmove;
 		}
 
-		public byte stable = 0; // Šm’èÎ‚ÌŒÂ”
-		public byte wing = 0; // ƒEƒCƒ“ƒO‚ÌŒÂ”
-		public byte mountain = 0; // R‚ÌŒÂ”
-		public byte Cmove = 0; // ŠëŒ¯‚ÈC‘Å‚¿‚ÌŒÂ”
+		public byte stable = 0; // ç¢ºå®šçŸ³ã®å€‹æ•°
+		public byte wing = 0; // ã‚¦ã‚¤ãƒ³ã‚°ã®å€‹æ•°
+		public byte mountain = 0; // å±±ã®å€‹æ•°
+		public byte Cmove = 0; // å±é™ºãªCå†…ã®å€‹æ•°
 	}
 
-	class CornerParam
-	{
-		public byte corner = 0; // ‹÷‚É‚ ‚éÎ‚Ì”
-		public byte Xmove = 0;  // ŠëŒ¯‚ÈX‘Å‚¿‚ÌŒÂ”
+	class CornerParam {
+		public byte corner = 0; // éš…ã«ã‚ã‚‹çŸ³ã®æ•°
+		public byte Xmove = 0; // å±é™ºãªXå†…ã®å€‹æ•°
 	}
-	
-	class EdgeStat
-	{
+
+	class EdgeStat {
 		private EdgeParam[] data = new EdgeParam[3];
-		
-		public EdgeStat()
-		{
-			for(int i=0; i<3; i++) data[i] = new EdgeParam();
+
+		public EdgeStat() {
+			for (int i = 0; i < 3; i++)
+				data[i] = new EdgeParam();
 		}
-		
-		public void add(EdgeStat e)
-		{
-			for(int i=0; i<3; i++) data[i].add(e.data[i]);
+
+		public void add(EdgeStat e) {
+			for (int i = 0; i < 3; i++)
+				data[i].add(e.data[i]);
 		}
-		
-		public EdgeParam get(int color)
-		{
-			return data[color+1];
+
+		public EdgeParam get(int color) {
+			return data[color + 1];
 		}
 	}
 
-	class CornerStat
-	{
+	class CornerStat {
 		private CornerParam[] data = new CornerParam[3];
-		public CornerStat()
-		{
-			for(int i=0; i<3; i++)
+
+		public CornerStat() {
+			for (int i = 0; i < 3; i++)
 				data[i] = new CornerParam();
 		}
-		public CornerParam get(int color)
-		{
-			return data[color+1];
+
+		public CornerParam get(int color) {
+			return data[color + 1];
 		}
 	}
 
-
-	// d‚İŒW”‚ğ‹K’è‚·‚é\‘¢‘Ì
-	class Weight
-	{
+	// é‡ã¿ä¿‚æ•°ã‚’è¦å®šã™ã‚‹æ§‹é€ ä½“
+	class Weight {
 		int mobility_w;
 		int liberty_w;
 		int stable_w;
@@ -78,20 +68,17 @@ class MidEvaluator implements Evaluator
 		int Xmove_w;
 		int Cmove_w;
 	}
-	
+
 	private Weight EvalWeight;
 
 	private static final int TABLE_SIZE = 6561; // 3^8
 	private static EdgeStat[] EdgeTable = new EdgeStat[TABLE_SIZE];
 	private static boolean TableInit = false;
 
-
-	public MidEvaluator()
-	{
-		if(!TableInit)
-		{
+	public MidEvaluator() {
+		if (!TableInit) {
 			//
-			//	‰‰ñ‹N“®‚Éƒe[ƒuƒ‹‚ğ¶¬
+			// åˆå›èµ·å‹•æ™‚ã«ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’ç”Ÿæˆ
 			//
 
 			int[] line = new int[Board.BOARD_SIZE];
@@ -100,84 +87,77 @@ class MidEvaluator implements Evaluator
 			TableInit = true;
 		}
 
-		// d‚İŒW”‚Ìİ’è (‘S‹Ç–Ê‹¤’Ê)
-		
+		// é‡ã¿ä¿‚æ•°ã®è¨­å®š(å…¨å±€é¢å…±é€š)
+
 		EvalWeight = new Weight();
 
 		EvalWeight.mobility_w = 67;
-		EvalWeight.liberty_w  = -13;
-		EvalWeight.stable_w   = 101;
-		EvalWeight.wing_w     = -308;
-		EvalWeight.Xmove_w    = -449;
-		EvalWeight.Cmove_w    = -552;
+		EvalWeight.liberty_w = -13;
+		EvalWeight.stable_w = 101;
+		EvalWeight.wing_w = -308;
+		EvalWeight.Xmove_w = -449;
+		EvalWeight.Cmove_w = -552;
 	}
-	
-	public int evaluate(Board board)
-	{
+
+	public int evaluate(Board board) {
 		EdgeStat edgestat;
 		CornerStat cornerstat;
 		int result;
 
 		//
-		//	•Ó‚Ì•]‰¿
+		// è¾ºã®è©•ä¾¡
 		//
 
-		edgestat  = EdgeTable[idxTop(board)];
+		edgestat = EdgeTable[idxTop(board)];
 		edgestat.add(EdgeTable[idxBottom(board)]);
 		edgestat.add(EdgeTable[idxRight(board)]);
 		edgestat.add(EdgeTable[idxLeft(board)]);
 
 		//
-		//	‹÷‚Ì•]‰¿
+		// éš…ã®è©•ä¾¡
 		//
 
 		cornerstat = evalCorner(board);
 
-		// Šm’èÎ‚ÉŠÖ‚µ‚ÄA‹÷‚ÌÎ‚ğ2‰ñ”‚¦‚Ä‚µ‚Ü‚Á‚Ä‚¢‚é‚Ì‚Å•â³B
+		// ç¢ºå®šå¸­ã«é–¢ã—ã¦ã€éš…ã®çŸ³ã‚’ï¼’å›æ•°ãˆã¦ã—ã¾ã£ã¦ã„ã‚‹ã®ã§è£œæ­£
 
 		edgestat.get(Disc.BLACK).stable -= cornerstat.get(Disc.BLACK).corner;
 		edgestat.get(Disc.WHITE).stable -= cornerstat.get(Disc.WHITE).corner;
 
 		//
-		//	ƒpƒ‰ƒ[ƒ^‚ÌüŒ`Œ‹‡
+		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®ç·šå‹çµåˆ
 		//
 
-		result =
-			  edgestat.get(Disc.BLACK).stable * EvalWeight.stable_w
-			- edgestat.get(Disc.WHITE).stable * EvalWeight.stable_w
-			+ edgestat.get(Disc.BLACK).wing * EvalWeight.wing_w
-			- edgestat.get(Disc.WHITE).wing * EvalWeight.wing_w
-			+ cornerstat.get(Disc.BLACK).Xmove * EvalWeight.Xmove_w
-			- cornerstat.get(Disc.WHITE).Xmove * EvalWeight.Xmove_w
-			+ edgestat.get(Disc.BLACK).Cmove * EvalWeight.Cmove_w
-			- edgestat.get(Disc.WHITE).Cmove * EvalWeight.Cmove_w
-			;
+		result = edgestat.get(Disc.BLACK).stable * EvalWeight.stable_w
+				- edgestat.get(Disc.WHITE).stable * EvalWeight.stable_w
+				+ edgestat.get(Disc.BLACK).wing * EvalWeight.wing_w
+				- edgestat.get(Disc.WHITE).wing * EvalWeight.wing_w
+				+ cornerstat.get(Disc.BLACK).Xmove * EvalWeight.Xmove_w
+				- cornerstat.get(Disc.WHITE).Xmove * EvalWeight.Xmove_w
+				+ edgestat.get(Disc.BLACK).Cmove * EvalWeight.Cmove_w
+				- edgestat.get(Disc.WHITE).Cmove * EvalWeight.Cmove_w;
 
-		// ŠJ•ú“xE’…è‰Â”\è”‚Ì•]‰¿
+		// é–‹æ”¾åº¦ãƒ»ç€æ‰‹å¯èƒ½æ‰‹æ•°ã®è©•ä¾¡
 
-		if(EvalWeight.liberty_w != 0)
-		{
+		if (EvalWeight.liberty_w != 0) {
 			ColorStorage liberty = countLiberty(board);
 			result += liberty.get(Disc.BLACK) * EvalWeight.liberty_w;
 			result -= liberty.get(Disc.WHITE) * EvalWeight.liberty_w;
 		}
 
-		// Œ»İ‚Ìè”Ô‚ÌF‚É‚Â‚¢‚Ä‚Ì‚İA’…è‰Â”\è”‚ğ”‚¦‚é
-		result +=
-			  board.getCurrentColor()
-			* board.getMovablePos().size()
-			* EvalWeight.mobility_w;
+		// ç¾çŠ¶ã®æ‰‹ç•ªã®è‰²ã«ã¤ã„ã¦ã®ã¿ã€ç€æ‰‹å¯èƒ½æ‰‹æ•°ã‚’æ•°ãˆã‚‹
+		result += board.getCurrentColor()
+				* board.getMovablePos().size()
+				* EvalWeight.mobility_w;
 
 		return board.getCurrentColor() * result;
 
 	}
 
-	private void generateEdge(int[] edge, int count)
-	{
-		if(count == Board.BOARD_SIZE)
-		{
+	private void generateEdge(int[] edge, int count) {
+		if (count == Board.BOARD_SIZE) {
 			//
-			//	‚±‚Ìƒpƒ^[ƒ“‚ÍŠ®¬‚µ‚½‚Ì‚ÅA‹Ç–Ê‚ÌƒJƒEƒ“ƒg
+			// ã“ã®ãƒ‘ã‚¿ãƒ¼ãƒ³ã¯å®Œæˆã—ãŸã®ã§ã€å±€é¢ã®ã‚«ã‚¦ãƒ³ãƒˆ
 			//
 
 			EdgeStat stat = new EdgeStat();
@@ -190,126 +170,125 @@ class MidEvaluator implements Evaluator
 			return;
 		}
 
-		// Ä‹A“I‚É‘S‚Ä‚Ìƒpƒ^[ƒ“‚ğ–Ô—…
+		// å†å¸°çš„ã«å…¨ã¦ã®ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’ç¶²ç¾…
 
 		edge[count] = Disc.EMPTY;
-		generateEdge(edge, count +1);
+		generateEdge(edge, count + 1);
 
 		edge[count] = Disc.BLACK;
-		generateEdge(edge, count +1);
+		generateEdge(edge, count + 1);
 
 		edge[count] = Disc.WHITE;
-		generateEdge(edge, count +1);
+		generateEdge(edge, count + 1);
 
-		return ;
+		return;
 
 	}
 
-	EdgeParam evalEdge(int line[], int color)
-	{
+	EdgeParam evalEdge(int line[], int color) {
 		EdgeParam edgeparam = new EdgeParam();
 
 		int x;
 
 		//
-		//	ƒEƒBƒ“ƒO“™‚ÌƒJƒEƒ“ƒg
+		// ã‚¦ã‚£ãƒ³ã‚°ãªã©ã®ã‚«ã‚¦ãƒ³ãƒˆ
 		//
 
-		if(line[0] == Disc.EMPTY && line[7] == Disc.EMPTY)
-		{
+		if (line[0] == Disc.EMPTY && line[7] == Disc.EMPTY) {
 			x = 2;
-			while(x <= 5)
-			{
-				if(line[x] != color) break;
+			while (x <= 5) {
+				if (line[x] != color)
+					break;
 				x++;
 			}
-			if(x == 6) // ­‚È‚­‚Æ‚àƒuƒƒbƒN‚ª‚Å‚«‚Ä‚¢‚é
+			if (x == 6) // å°‘ãªãã¨ã‚‚ãƒ–ãƒ­ãƒƒã‚¯ãŒã§ãã¦ã„ã‚‹
 			{
-				if(line[1] == color && line[6] == Disc.EMPTY)
+				if (line[1] == color && line[6] == Disc.EMPTY)
 					edgeparam.wing = 1;
-				else if(line[1] == Disc.EMPTY && line[6] == color)
+				else if (line[1] == Disc.EMPTY && line[6] == color)
 					edgeparam.wing = 1;
-				else if(line[1] == color && line[6] == color)
+				else if (line[1] == color && line[6] == color)
 					edgeparam.mountain = 1;
-			}
-			else // ‚»‚êˆÈŠO‚Ìê‡‚ÉA‹÷‚É—×Ú‚·‚éˆÊ’u‚É’u‚¢‚Ä‚¢‚½‚ç
+			} else // ãã‚Œä»¥å¤–ã®å ´åˆã«ã€éš…ã«éš£æ¥ã™ã‚‹ä½ç½®ã«ç½®ã„ã¦ã„ãŸã‚‰
 			{
-				if(line[1] == color)
+				if (line[1] == color)
 					edgeparam.Cmove++;
-				if(line[6] == color)
+				if (line[6] == color)
 					edgeparam.Cmove++;
 			}
 		}
 
 		//
-		//	Šm’èÎ‚ÌƒJƒEƒ“ƒg
+		// ç¢ºå®šçŸ³ã®ã‚«ã‚¦ãƒ³ãƒˆ
 		//
 
-		// ¶‚©‚ç‰E•ûŒü‚É‘–¸
-		for(x = 0; x < 8; x++)
-		{
-			if(line[x] != color) break;
+		// å·¦ã‹ã‚‰å³æ–¹å‘ã«èµ°æŸ»
+		for (x = 0; x < 8; x++) {
+			if (line[x] != color)
+				break;
 			edgeparam.stable++;
 		}
 
-		if(edgeparam.stable < 8)
-		{
-			// ‰E‘¤‚©‚ç‚Ì‘–¸‚à•K—v
-			for(x = 7; x > 0; x--)
-			{
-				if(line[x] != color) break;
+		if (edgeparam.stable < 8) {
+			// å³å´ã‹ã‚‰ã®èµ°æŸ»ã‚‚å¿…è¦
+			for (x = 7; x > 0; x--) {
+				if (line[x] != color)
+					break;
 				edgeparam.stable++;
 			}
 		}
-
 
 		return edgeparam;
 
 	}
 
-
-	CornerStat evalCorner(Board board)
-	{
+	CornerStat evalCorner(Board board) {
 		CornerStat cornerstat = new CornerStat();
 
-		cornerstat.get(Disc.BLACK).corner=0; cornerstat.get(Disc.BLACK).Xmove=0;
-		cornerstat.get(Disc.WHITE).corner=0; cornerstat.get(Disc.WHITE).Xmove=0;
-		
+		cornerstat.get(Disc.BLACK).corner = 0;
+		cornerstat.get(Disc.BLACK).Xmove = 0;
+		cornerstat.get(Disc.WHITE).corner = 0;
+		cornerstat.get(Disc.WHITE).Xmove = 0;
+
 		Point p = new Point();
 
-		//	¶ã
-		p.x = 1; p.y = 1;
+		// å·¦ä¸Š
+		p.x = 1;
+		p.y = 1;
 		cornerstat.get(board.getColor(p)).corner++;
-		if(board.getColor(p) == Disc.EMPTY)
-		{
-			p.x = 2; p.y = 2;
+		if (board.getColor(p) == Disc.EMPTY) {
+			p.x = 2;
+			p.y = 2;
 			cornerstat.get(board.getColor(p)).Xmove++;
 		}
 
-		//	¶‰º
-		p.x = 1; p.y = 8;
+		// å·¦ä¸‹
+		p.x = 1;
+		p.y = 8;
 		cornerstat.get(board.getColor(p)).corner++;
-		if(board.getColor(p) == Disc.EMPTY)
-		{
-			p.x = 2; p.y = 7;
+		if (board.getColor(p) == Disc.EMPTY) {
+			p.x = 2;
+			p.y = 7;
 			cornerstat.get(board.getColor(p)).Xmove++;
 		}
 
-		//	‰E‰º
-		p.x = 8; p.y = 8;
+		// å³ä¸‹
+		p.x = 8;
+		p.y = 8;
 		cornerstat.get(board.getColor(p)).corner++;
-		if(board.getColor(p) == Disc.EMPTY)
-		{
-			p.x = 7; p.y = 7;
+		if (board.getColor(p) == Disc.EMPTY) {
+			p.x = 7;
+			p.y = 7;
 			cornerstat.get(board.getColor(p)).Xmove++;
 		}
 
-		//	‰Eã
-		p.x = 8; p.y = 1;
+		// å³ä¸Š
+		p.x = 8;
+		p.y = 1;
 		cornerstat.get(board.getColor(p)).corner++;
-		if(board.getColor(p) == Disc.EMPTY)
-		{
-			p.x = 7; p.y = 7;
+		if (board.getColor(p) == Disc.EMPTY) {
+			p.x = 7;
+			p.y = 7;
 			cornerstat.get(board.getColor(p)).Xmove++;
 		}
 
@@ -317,14 +296,12 @@ class MidEvaluator implements Evaluator
 
 	}
 
-	int idxTop(Board board)
-	{
+	int idxTop(Board board) {
 		int index = 0;
-		
+
 		int m = 1;
 		Point p = new Point(0, 1);
-		for(int i=Board.BOARD_SIZE; i>0; i--)
-		{
+		for (int i = Board.BOARD_SIZE; i > 0; i--) {
 			p.x = i;
 			index += m * (board.getColor(p) + 1);
 			m *= 3;
@@ -333,14 +310,12 @@ class MidEvaluator implements Evaluator
 		return index;
 	}
 
-	int idxBottom(Board board)
-	{
+	int idxBottom(Board board) {
 		int index = 0;
-		
+
 		int m = 1;
 		Point p = new Point(0, 8);
-		for(int i=Board.BOARD_SIZE; i>0; i--)
-		{
+		for (int i = Board.BOARD_SIZE; i > 0; i--) {
 			p.x = i;
 			index += m * (board.getColor(p) + 1);
 			m *= 3;
@@ -350,14 +325,12 @@ class MidEvaluator implements Evaluator
 
 	}
 
-	int idxRight(Board board)
-	{
+	int idxRight(Board board) {
 		int index = 0;
-		
+
 		int m = 1;
 		Point p = new Point(8, 0);
-		for(int i=Board.BOARD_SIZE; i>0; i--)
-		{
+		for (int i = Board.BOARD_SIZE; i > 0; i--) {
 			p.y = i;
 			index += m * (board.getColor(p) + 1);
 			m *= 3;
@@ -367,14 +340,12 @@ class MidEvaluator implements Evaluator
 
 	}
 
-	int idxLeft(Board board)
-	{
+	int idxLeft(Board board) {
 		int index = 0;
-		
+
 		int m = 1;
 		Point p = new Point(1, 0);
-		for(int i=Board.BOARD_SIZE; i>0; i--)
-		{
+		for (int i = Board.BOARD_SIZE; i > 0; i--) {
 			p.y = i;
 			index += m * (board.getColor(p) + 1);
 			m *= 3;
@@ -384,19 +355,18 @@ class MidEvaluator implements Evaluator
 
 	}
 
-	private ColorStorage countLiberty(Board board)
-	{
+	private ColorStorage countLiberty(Board board) {
 		ColorStorage liberty = new ColorStorage();
 
-		liberty.set(Disc.BLACK, 0); liberty.set(Disc.WHITE, 0); liberty.set(Disc.EMPTY, 0);
+		liberty.set(Disc.BLACK, 0);
+		liberty.set(Disc.WHITE, 0);
+		liberty.set(Disc.EMPTY, 0);
 
 		Point p = new Point();
 
-		for(int x = 1; x <= Board.BOARD_SIZE; x++)
-		{
+		for (int x = 1; x <= Board.BOARD_SIZE; x++) {
 			p.x = x;
-			for(int y = 1; y <= Board.BOARD_SIZE; y++)
-			{
+			for (int y = 1; y <= Board.BOARD_SIZE; y++) {
 				p.y = y;
 				int l = liberty.get(board.getColor(p));
 				l += board.getLiberty(p);
@@ -408,9 +378,9 @@ class MidEvaluator implements Evaluator
 
 	}
 
-	private int idxLine(int[] l)
-	{
-		return 3*(3*(3*(3*(3*(3*(3*(l[0]+1)+l[1]+1)+l[2]+1)+l[3]+1)+l[4]+1)+l[5]+1)+l[6]+1)+l[7]+1;
+	private int idxLine(int[] l) {
+		return 3 * (3 * (3 * (3 * (3 * (3 * (3 * (l[0] + 1) + l[1] + 1) + l[2] + 1) + l[3] + 1) + l[4] + 1) + l[5] + 1)
+				+ l[6] + 1) + l[7] + 1;
 	}
 
 }
